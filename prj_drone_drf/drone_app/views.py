@@ -14,7 +14,6 @@ class DroneViewSet(viewsets.ModelViewSet):
     """
     queryset = Drone.objects.all()
     serializer_class = DroneSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class MedicationViewSet(viewsets.ModelViewSet):
@@ -23,4 +22,3 @@ class MedicationViewSet(viewsets.ModelViewSet):
     """
     queryset = Medication.objects.all()
     serializer_class = MedicationSerializer
-    permission_classes = [permissions.IsAuthenticated]
