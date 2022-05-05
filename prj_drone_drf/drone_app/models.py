@@ -49,15 +49,15 @@ class Drone(models.Model):
     )
 
     DRONE_MODEL_CHOICES = [
-        ('LW', 'Lightweight'),
-        ('MW', 'Middleweight'),
-        ('CW', 'Cruiserweight'),
-        ('HW', 'Heavyweight'),
+        ('Lightweight', 'Lightweight'),
+        ('Middleweight', 'Middleweight'),
+        ('Cruiserweight', 'Cruiserweight'),
+        ('Heavyweight', 'Heavyweight'),
     ]
     model = models.CharField(
         max_length=13,
         choices=DRONE_MODEL_CHOICES,
-        default='LW',
+        default='Lightweight',
         help_text="Model of the drone"
     )
 
@@ -81,17 +81,17 @@ class Drone(models.Model):
     )
 
     DRONE_STATE_CHOICES = [
-        ('IE', 'IDLE'),
-        ('LG', 'LOADING'),
-        ('LD', 'LOADED'),
-        ('DG', 'DELIVERING'),
-        ('DD', 'DELIVERED'),
-        ('RG', 'RETURNING'),
+        ('IDLE', 'IDLE'),
+        ('LOADING', 'LOADING'),
+        ('LOADED', 'LOADED'),
+        ('DELIVERING', 'DELIVERING'),
+        ('DELIVERED', 'DELIVERED'),
+        ('RETURNING', 'RETURNING'),
     ]
     state = models.CharField(
         max_length=10,
         choices=DRONE_STATE_CHOICES,
-        default='IE',
+        default='IDLE',
         help_text="State of the drone"
     )
 
