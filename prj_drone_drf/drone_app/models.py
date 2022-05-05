@@ -32,6 +32,9 @@ class Medication(models.Model):
         help_text="Image of the medication"
     )
 
+    def __str__(self):
+        return f'{self.name}/{self.code} - cap: {self.weight}'
+
 
 class Drone(models.Model):
     serial_number = models.CharField(
@@ -87,4 +90,8 @@ class Drone(models.Model):
         help_text="State of the drone"
     )
 
-    medications = models.ManyToManyField(Medication, related_name="drones", blank=True)
+    medications = models.ManyToManyField(
+        Medication, related_name="drones", blank=True)
+
+    def __str__(self):
+        return f'{self.serial_number}/{self.model} - cap: {self.weight_limit}'
