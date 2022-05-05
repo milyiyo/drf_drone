@@ -1,26 +1,26 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
+from prj_drone_drf.drone_app.models import Drone, Medication
 
-from prj_drone_drf.drone_app.serializers import GroupSerializer, UserSerializer
+from prj_drone_drf.drone_app.serializers import DroneSerializer, MedicationSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class DroneViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows drones to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
+    queryset = Drone.objects.all()
+    serializer_class = DroneSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class MedicationViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows medications to be viewed or edited.
     """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+    queryset = Medication.objects.all()
+    serializer_class = MedicationSerializer
     permission_classes = [permissions.IsAuthenticated]
