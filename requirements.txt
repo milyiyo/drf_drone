@@ -1,2 +1,4 @@
 django==4.0.4
 djangorestframework==3.13.1
+autopep8==1.6.0
+pillow==9.1.0
