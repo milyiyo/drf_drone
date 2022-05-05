@@ -8,7 +8,7 @@ class Medication(models.Model):
         max_length=200,
         unique=True,
         validators=[RegexValidator(
-            r"[a-zA-Z0-9-_]+", "Allowed only letters, numbers, ‘-‘, ‘_’.")],
+            r"^[a-zA-Z0-9-_]+$", "Allowed only letters, numbers, ‘-‘, ‘_’.")],
         help_text="Name of the medication"
     )
 
@@ -23,7 +23,7 @@ class Medication(models.Model):
         max_length=200,
         unique=True,
         validators=[RegexValidator(
-            r"[A-Z0-9_]+", "Allowed only upper case letters, underscore and numbers.")],
+            r"^[A-Z0-9_]+$", "Allowed only upper case letters, underscore and numbers.")],
         help_text="Code of the medication"
     )
 
