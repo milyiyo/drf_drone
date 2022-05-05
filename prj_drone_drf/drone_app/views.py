@@ -1,8 +1,4 @@
-from django.shortcuts import render
-
-# Create your views here.
 from rest_framework import viewsets
-from rest_framework import permissions
 from prj_drone_drf.drone_app.models import Drone, Medication
 
 from prj_drone_drf.drone_app.serializers import DroneSerializer, MedicationSerializer
