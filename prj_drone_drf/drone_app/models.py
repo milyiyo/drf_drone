@@ -1,6 +1,11 @@
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
 from django.db import models
+from django.db.models.signals import pre_save
+from django.db.utils import OperationalError
+from django.dispatch import receiver
+
+from prj_drone_drf.drone_app.utils import validate_fleet_size
 
 
 class Medication(models.Model):
@@ -95,3 +100,8 @@ class Drone(models.Model):
 
     def __str__(self):
         return f'{self.serial_number}/{self.model} - cap: {self.weight_limit}'
+
+
+@receiver(pre_save, sender=Drone)
+def drone_validator(sender, instance, *args, **kwargs):
+    validate_fleet_size(Drone, OperationalError)
