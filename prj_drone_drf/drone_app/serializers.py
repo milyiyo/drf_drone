@@ -1,14 +1,29 @@
-from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
+from prj_drone_drf.drone_app.models import Drone, Medication
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+
+class DroneSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
-        fields = ['url', 'username', 'email', 'groups']
+        model = Drone
+        fields = [
+            'id',
+            'serial_number',
+            'model',
+            'weight_limit',
+            'battery_capacity',
+            'state',
+            'medications'
+        ]
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class MedicationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Group
-        fields = ['url', 'name']
+        model = Medication
+        fields = [
+            'id',
+            'image',
+            'weight',
+            'name',
+            'code'
+        ]
