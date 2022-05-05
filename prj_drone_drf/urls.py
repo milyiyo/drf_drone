@@ -22,8 +22,8 @@ from rest_framework import routers
 from prj_drone_drf.drone_app import views
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+router.register(r'drones', views.DroneViewSet)
+router.register(r'medications', views.MedicationViewSet)
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
