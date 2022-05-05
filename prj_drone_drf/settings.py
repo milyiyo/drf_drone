@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'prj_drone_drf.drone_app'
 ]
 
 MIDDLEWARE = [
