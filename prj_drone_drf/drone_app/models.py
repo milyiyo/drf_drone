@@ -34,6 +34,7 @@ class Medication(models.Model):
 
     image = models.ImageField(
         upload_to="images_med",
+        null=True,
         help_text="Image of the medication"
     )
 
