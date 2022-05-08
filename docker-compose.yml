@@ -17,7 +17,7 @@ services:
   
   web:
     build: .
-    command: bash -c "python /code/manage.py migrate --noinput && python /code/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python /code/manage.py migrate --noinput && python /code/manage.py loaddata data.json && python /code/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
