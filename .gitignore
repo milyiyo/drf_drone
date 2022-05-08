@@ -1,5 +1,11 @@
+# Folders
 env
 __pycache__
-*.sqlite3
 images_med
 .vscode
+
+# SQLite
+*.sqlite3
+
+# Celery files
+celerybeat-schedule
