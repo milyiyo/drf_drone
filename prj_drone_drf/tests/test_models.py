@@ -118,6 +118,35 @@ class DroneAPITests(APITestCase):
                                    med_data['id']], format='json')
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
+    def test_successful_load_of_medications(self):
+        # Create the drone
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'Lightweight',
+            'weight_limit': 100,
+            'battery_capacity': 100
+        }
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        drone_data = json.loads(response.content)
+
+        # Create the medication
+        for i in range(2):
+            med_data = {
+                'name': f'med_{i}',
+                'code': f'COD_{i}',
+                'weight': 50
+            }
+            response = self.client.post(
+                self.medication_url, med_data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Load two medications successfully
+        drone_medications_url = f"{self.drone_url}{drone_data['id']}/medications/"
+        response = self.client.put(
+            drone_medications_url, [1, 2], format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_battery_below_25(self):
         ...
 
