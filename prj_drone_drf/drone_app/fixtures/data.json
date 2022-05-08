@@ -1,0 +1,51 @@
+[
+  {
+    "model": "drone_app.drone",
+    "pk": 4,
+    "fields": {
+      "serial_number": "drone_04",
+      "model": "Lightweight",
+      "weight_limit": 100,
+      "battery_capacity": 100,
+      "state": "IDLE"
+    }
+  },
+  {
+    "model": "drone_app.drone",
+    "pk": 5,
+    "fields": {
+      "serial_number": "drone_05",
+      "model": "Lightweight",
+      "weight_limit": 200,
+      "battery_capacity": 80,
+      "state": "IDLE"
+    }
+  },
+  {
+    "model": "drone_app.medication",
+    "pk": 1,
+    "fields": {
+      "name": "med_01",
+      "code": "COD_01",
+      "weight": 10
+    }
+  },
+  {
+    "model": "drone_app.medication",
+    "pk": 2,
+    "fields": {
+      "name": "med_02",
+      "code": "COD_02",
+      "weight": 20
+    }
+  },
+  {
+    "model": "drone_app.medication",
+    "pk": 3,
+    "fields": {
+      "name": "med_03",
+      "code": "COD_03",
+      "weight": 30
+    }
+  }
+]
