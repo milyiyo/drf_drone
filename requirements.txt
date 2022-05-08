@@ -2,3 +2,6 @@ django==4.0.4
 djangorestframework==3.13.1
 autopep8==1.6.0
 pillow==9.1.0
+celery==5.2.6
+redis==4.2.2
+flower==1.0.0
