@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from __future__ import absolute_import
 from pathlib import Path
+import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,12 +85,20 @@ WSGI_APPLICATION = 'prj_drone_drf.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
+DB_SQLITE = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / 'db.sqlite3',
+}
+DB_POSTGRESQL = {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.environ.get('POSTGRES_DB', 'db_drone_app'),
+    'USER': os.environ.get('POSTGRES_USER', 'db_user'),
+    'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'db_password123*'),
+    'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+    'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+}
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': DB_POSTGRESQL if os.environ.get('DOCKER_CONTAINER', 0) == '1' else DB_SQLITE
 }
 
 

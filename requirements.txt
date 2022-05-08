@@ -5,3 +5,4 @@ pillow==9.1.0
 celery==5.2.6
 redis==4.2.2
 flower==1.0.0
+psycopg2==2.9.3
