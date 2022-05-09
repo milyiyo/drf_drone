@@ -1,4 +1,3 @@
-from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 import json
@@ -148,19 +147,110 @@ class DroneAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_battery_below_25(self):
-        ...
+        # GIVEN
+        # Create the drone
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'Lightweight',
+            'weight_limit': 100,
+            'battery_capacity': 10
+        }
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        resp_data = json.loads(response.content)
+        # WHEN
+        # Update the state to LOADING
+        response = self.client.patch(
+            path=f"{self.drone_url}{resp_data['id']}/",
+            data={'state': 'LOADING'},
+            format='json')
+        # THEN
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        resp_data = json.loads(response.content)
+        self.assertEqual(
+            resp_data[0], 'The drone cannot be in LOADING state if its battery level is below 25%')
 
     def test_serial_number_length(self):
-        ...
+        # GIVEN
+        drone_data = {
+            'serial_number': 'a'*101,
+            'model': 'Lightweight',
+            'weight_limit': 100,
+            'battery_capacity': 10
+        }
+        # WHEN
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        # THEN
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        resp_data = json.loads(response.content)
+        error_text = resp_data['serial_number'][0]
+        self.assertEqual(
+            error_text, 'Ensure this field has no more than 100 characters.')
 
     def test_weight_below_limit(self):
-        ...
+        # GIVEN
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'Lightweight',
+            'weight_limit': -10,
+            'battery_capacity': 10
+        }
+        # WHEN
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        # THEN
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        resp_data = json.loads(response.content)
+        error_text = resp_data['weight_limit'][0]
+        self.assertEqual(
+            error_text, 'Ensure this value is greater than or equal to 1.')
 
     def test_weight_above_limit(self):
-        ...
-
-    def test_load_with_medications(self):
-        ...
-
-    def test_exceeded_capacity_limit(self):
-        ...
+        # GIVEN
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'Lightweight',
+            'weight_limit': 600,
+            'battery_capacity': 10
+        }
+        # WHEN
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        # THEN
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        resp_data = json.loads(response.content)
+        error_text = resp_data['weight_limit'][0]
+        self.assertEqual(
+            error_text, 'Ensure this value is less than or equal to 500.')
+    
+    def test_error_creating_drone_wrong_state(self):
+        # GIVEN
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'Lightweight',
+            'weight_limit': 100,
+            'battery_capacity': 10,
+            'state':'INVALID_STATE'
+        }
+        # WHEN
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        # THEN
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        resp_data = json.loads(response.content)
+        error_text = resp_data['state'][0]
+        self.assertEqual(
+            error_text, '"INVALID_STATE" is not a valid choice.')
+    
+    def test_error_creating_drone_wrong_model(self):
+        # GIVEN
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'INVALID_MODEL',
+            'weight_limit': 100,
+            'battery_capacity': 10,
+        }
+        # WHEN
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        # THEN
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        resp_data = json.loads(response.content)
+        error_text = resp_data['model'][0]
+        self.assertEqual(
+            error_text, '"INVALID_MODEL" is not a valid choice.')
