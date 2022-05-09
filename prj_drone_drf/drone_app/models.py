@@ -17,10 +17,12 @@ class Medication(models.Model):
         help_text="Name of the medication"
     )
 
-    weight = models.IntegerField(
+    weight = models.DecimalField(
         validators=[
             MinValueValidator(1)
         ],
+        max_digits=5,
+        decimal_places=2,
         help_text="Weight of the medication in grams"
     )
 
