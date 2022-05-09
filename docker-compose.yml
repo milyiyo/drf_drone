@@ -34,7 +34,7 @@ services:
   
   celery:
     build: .
-    command: celery -A prj_drone_drf worker -l info
+    command: celery -A prj_drone_drf worker -l info -f ./logs/drone_celery.log
     volumes:
       - .:/code
     depends_on:
