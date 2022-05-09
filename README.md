@@ -15,7 +15,7 @@ This is an implementation of a simple project to manage a drone fleet and the me
         MEDICATION {
             string name
             string code
-            int weight
+            decimal weight
             binary image
         }
 ```
@@ -68,6 +68,8 @@ In the following diagram you can see the relation between the different services
       srv:loki---srv:promtail;
       srv:promtail---file:drone_celery.logs;
 ```
+
+> **Note**: Every 10 seconds will be executed a periodic task to check the battery of each drone. The resultant information will be stored in the file `drone_celery.logs`.
 
 
 ## Logs visualization
