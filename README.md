@@ -55,7 +55,7 @@ This is an implementation of a simple project to manage a drone fleet and the me
 - Stop the services:
     - `docker-compose down`
 
-In the following diagram, you can see the relation between the different services.
+In the following diagram, you can see the relation between the different services created via docker-compose.
 
 ```mermaid
   graph TD;
@@ -91,7 +91,7 @@ To visualize the logs using Grafana, please follow the following steps:
     - Go to `Configuration > Data sources`
     - Click on `Add data source`
     - Select `Loki`
-        > In the configuration form of Loki.
+    - In the configuration form of Loki.
         - URL: http://loki:3100
         - Click on `Save & test`
             > Should appear the message `Data source connected and labels found.` if it was connected successfully.
@@ -108,6 +108,13 @@ To visualize the logs using Grafana, please follow the following steps:
     - Go to `Search dashboards`
     - Select the dashboard named `Logs / App`
     > Now you should be able to see the logs :)
+
+## Links of interest
+
+- Celery Flower: http://127.0.0.1:5555/
+- Django Rest Framework: http://127.0.0.1:8000/api/v1/
+- Django Admin: http://127.0.0.1:8000/admin/
+- Grafana: http://127.0.0.1:3000/
 
 # Examples consuming the endpoints
 
@@ -162,15 +169,13 @@ curl -X PUT \
 - Check the available drones for loading.
 
 ```bash
-curl -X GET \
-  http://127.0.0.1:8000/api/v1/drones/available/
+curl -X GET http://127.0.0.1:8000/api/v1/drones/available/
 ```
 
 - Check the battery level for a given drone.
 
 ```bash
-curl -X GET \
-  http://127.0.0.1:8000/api/v1/drones/1/battery/
+curl -X GET http://127.0.0.1:8000/api/v1/drones/1/battery/
 ```
 
 
