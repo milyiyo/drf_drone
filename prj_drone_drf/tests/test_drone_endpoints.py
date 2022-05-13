@@ -1,6 +1,7 @@
+import json
+
 from rest_framework import status
 from rest_framework.test import APITestCase
-import json
 
 
 class DroneAPITests(APITestCase):
@@ -88,7 +89,7 @@ class DroneAPITests(APITestCase):
         response_data = json.loads(response.content)
         self.assertEqual(FLEET_LIMIT, response_data['count'])
 
-    def test_error_carrying_medications(self):
+    def test_error_carrying_medications_single_item(self):
         # Create the drone
         drone_data = {
             'serial_number': 'drone_01',
@@ -116,6 +117,38 @@ class DroneAPITests(APITestCase):
         response = self.client.put(drone_medications_url, [
                                    med_data['id']], format='json')
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
+    def test_error_carrying_medications_multiple_items(self):
+        # Create the drone
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'Lightweight',
+            'weight_limit': 100,
+            'battery_capacity': 100
+        }
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        drone_data = json.loads(response.content)
+
+        # Create the medication
+        med_data = {
+            'name': 'med_01',
+            'code': 'COD_01',
+            'weight': 10
+        }
+        response = self.client.post(
+            self.medication_url, med_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        med_data = json.loads(response.content)
+
+        # Try to load the drone with a weight higher than its limit.
+        drone_medications_url = f"{self.drone_url}{drone_data['id']}/medications/"
+        response = self.client.put(drone_medications_url, [
+                                   med_data['id']]*20, format='json')
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        resp_data = json.loads(response.content)
+        self.assertEqual(
+            resp_data['detail'], "The list of medications cannot be loaded because exceed the drone\'s capacity")
 
     def test_successful_load_of_medications(self):
         # Create the drone
@@ -145,6 +178,51 @@ class DroneAPITests(APITestCase):
         response = self.client.put(
             drone_medications_url, [1, 2], format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_successful_load_of_repeated_medications(self):
+        # GIVEN
+        # Create the drone
+        drone_data = {
+            'serial_number': 'drone_01',
+            'model': 'Lightweight',
+            'weight_limit': 100,
+            'battery_capacity': 100
+        }
+        response = self.client.post(self.drone_url, drone_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        drone_data = json.loads(response.content)
+
+        # Create the medications
+        for i in range(2):
+            med_data = {
+                'name': f'med_{i}',
+                'code': f'COD_{i}',
+                'weight': 20
+            }
+            response = self.client.post(
+                self.medication_url, med_data, format='json')
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # WHEN
+        # Load multiples medications of the same type.
+        #   med_01 -> 2 items
+        #   med_02 -> 3 items
+        drone_medications_url = f"{self.drone_url}{drone_data['id']}/medications/"
+        response = self.client.put(
+            drone_medications_url, [1, 1, 2, 2, 2], format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # THEN
+        response = self.client.get(self.drone_url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(response.content)
+        load_info = response_data['results'][0]['load_info']
+        quantity_info = {x['medication']: x['quantity'] for x in load_info}
+        # Check the following amounts
+        #   med_01 -> 2 items
+        #   med_02 -> 3 items
+        self.assertEqual(quantity_info[1], 2)
+        self.assertEqual(quantity_info[2], 3)
 
     def test_battery_below_25(self):
         # GIVEN
@@ -219,7 +297,7 @@ class DroneAPITests(APITestCase):
         error_text = resp_data['weight_limit'][0]
         self.assertEqual(
             error_text, 'Ensure this value is less than or equal to 500.')
-    
+
     def test_error_creating_drone_wrong_state(self):
         # GIVEN
         drone_data = {
@@ -227,7 +305,7 @@ class DroneAPITests(APITestCase):
             'model': 'Lightweight',
             'weight_limit': 100,
             'battery_capacity': 10,
-            'state':'INVALID_STATE'
+            'state': 'INVALID_STATE'
         }
         # WHEN
         response = self.client.post(self.drone_url, drone_data, format='json')
@@ -237,7 +315,7 @@ class DroneAPITests(APITestCase):
         error_text = resp_data['state'][0]
         self.assertEqual(
             error_text, '"INVALID_STATE" is not a valid choice.')
-    
+
     def test_error_creating_drone_wrong_model(self):
         # GIVEN
         drone_data = {
