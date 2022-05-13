@@ -17,13 +17,6 @@ class DroneViewSet(viewsets.ModelViewSet):
     queryset = Drone.objects.all()
     serializer_class = DroneSerializer
 
-    # The service should allow:
-    # [x] registering a drone;
-    # [x] loading a drone with medication items;
-    # [x] checking loaded medication items for a given drone;
-    # [x] checking available drones for loading;
-    # [x] check drone battery level for a given drone;
-
     @action(detail=False, methods=['get'], url_path='available')
     def available(self, request, *args, **kwargs):
         """

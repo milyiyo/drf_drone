@@ -8,9 +8,6 @@ class DroneAPITests(APITestCase):
     drone_url = '/api/v1/drones/'
     medication_url = '/api/v1/medications/'
 
-    def setUp(self):
-        ...
-
     def test_empty_fleet(self):
         # WHEN
         response = self.client.get(self.drone_url, format='json')
