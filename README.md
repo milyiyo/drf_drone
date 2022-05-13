@@ -129,8 +129,7 @@ curl -X POST \
     "model": "Lightweight",
     "weight_limit": "200.00",
     "battery_capacity": 100,
-    "state": "IDLE",
-    "medications": []
+    "state": "IDLE"
 }'
 ```
 
