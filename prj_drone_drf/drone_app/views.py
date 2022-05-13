@@ -1,5 +1,7 @@
 from django.http.response import Http404
-from prj_drone_drf.drone_app.models import Drone, Medication
+from prj_drone_drf.drone_app.models.drone import Drone
+from prj_drone_drf.drone_app.models.load_information import LoadInformation
+from prj_drone_drf.drone_app.models.medication import Medication
 from prj_drone_drf.drone_app.serializers import (DroneSerializer,
                                                  MedicationSerializer)
 from rest_framework import viewsets
@@ -51,15 +53,20 @@ class DroneViewSet(viewsets.ModelViewSet):
             raise Http404
 
         if request.method == 'GET':
-            serializer = MedicationSerializer(drone.medications, many=True)
-            return Response(serializer.data)
+            load_info = LoadInformation.objects.filter(drone__pk=drone.pk)
+            serializer = MedicationSerializer(
+                [x.medication for x in load_info], many=True)
+            quantities = [x.quantity for x in load_info]
+            res = [{'quantity': x[0], 'medication':x[1]}
+                   for x in zip(quantities, serializer.data)]
+            return Response(res)
 
         if request.method == 'PUT':
             med_ids = request.data
             medications = Medication.objects.filter(pk__in=med_ids)
 
             # Verify that all medications id are present
-            if len(med_ids) != medications.count():
+            if len(set(med_ids)) != medications.count():
                 stored_ids = [m.pk for m in medications]
                 not_found_ids = [id for id in med_ids if id not in stored_ids]
                 return Response(data={
@@ -67,13 +74,23 @@ class DroneViewSet(viewsets.ModelViewSet):
                 }, status=404)
 
             # Check the drone's weight limit
-            if drone.weight_limit < sum([x.weight for x in medications]):
+            weight_medications = sum(
+                [sum([med.weight for med in medications if med.pk == _id]) for _id in med_ids])
+            if drone.weight_limit < weight_medications:
                 return Response(data={
                     'detail': "The list of medications cannot be loaded because exceed the drone's capacity"
                 }, status=406)
 
-            # Replace the medications of the drone
-            drone.medications.set(medications)
+            # Remove previous rows of LoadInformation related to the drone
+            drone_rows = LoadInformation.objects.filter(drone__pk=drone.pk)
+            drone_rows.delete()
+            # Create the new relations in LoadInformation
+            for m in medications:
+                load_inst = LoadInformation(drone=drone,
+                                            medication=m,
+                                            quantity=len([x for x in med_ids if x == m.pk]))
+                load_inst.save()
+
             serializer = self.get_serializer(drone)
             return Response(serializer.data)
 
