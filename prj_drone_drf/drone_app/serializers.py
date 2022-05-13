@@ -50,11 +50,11 @@ class DroneSerializer(serializers.ModelSerializer):
 
         # Prevent the drone from being in LOADING state if the battery level is **below 25%**
         battery_capacity = validated_data['battery_capacity'] \
-                if 'battery_capacity' in validated_data \
-                else instance.battery_capacity
+            if 'battery_capacity' in validated_data \
+            else instance.battery_capacity
         state = validated_data['state'] \
-                if 'state' in validated_data \
-                else instance.state
+            if 'state' in validated_data \
+            else instance.state
         if battery_capacity < 25 and state == 'LOADING':
             raise serializers.ValidationError(
                 "The drone cannot be in LOADING state if its battery level is below 25%")
