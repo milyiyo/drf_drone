@@ -17,6 +17,8 @@ class LoadInformationSerializer(serializers.ModelSerializer):
 
 
 class DroneSerializer(serializers.ModelSerializer):
+    load_info = LoadInformationSerializer(many=True, required=False)
+
     class Meta:
         model = Drone
         fields = [
@@ -26,10 +28,8 @@ class DroneSerializer(serializers.ModelSerializer):
             'weight_limit',
             'battery_capacity',
             'state',
-            'medications'
+            'load_info'
         ]
-
-    medications = serializers.PrimaryKeyRelatedField(queryset=Medication.objects.all(), required=False, many=True)
 
     def validate(self, data):
         validate_fleet_size(Drone, serializers.ValidationError)
