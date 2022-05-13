@@ -1,7 +1,19 @@
+from prj_drone_drf.drone_app.models.drone import Drone
+from prj_drone_drf.drone_app.models.load_information import LoadInformation
+from prj_drone_drf.drone_app.models.medication import Medication
+from prj_drone_drf.drone_app.utils import validate_fleet_size
 from rest_framework import serializers
 
-from prj_drone_drf.drone_app.models import Drone, Medication
-from prj_drone_drf.drone_app.utils import validate_fleet_size
+
+class LoadInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LoadInformation
+        fields = [
+            'id',
+            'drone',
+            'medication',
+            'quantity'
+        ]
 
 
 class DroneSerializer(serializers.ModelSerializer):
