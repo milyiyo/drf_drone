@@ -7,7 +7,7 @@ logger = get_task_logger(__name__)
 
 @shared_task
 def check_drones_battery():
-    from prj_drone_drf.drone_app.models import Drone
+    from prj_drone_drf.drone_app.models.drone import Drone
     fleet = Drone.objects.all()
     for drone in fleet:
         logger.info(
