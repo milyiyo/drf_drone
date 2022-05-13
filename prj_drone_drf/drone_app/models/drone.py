@@ -1,47 +1,10 @@
-from django.core.validators import (MaxValueValidator, MinValueValidator,
-                                    RegexValidator)
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_save
 from django.db.utils import OperationalError
 from django.dispatch import receiver
-
+from prj_drone_drf.drone_app.models.load_information import LoadInformation
 from prj_drone_drf.drone_app.utils import validate_fleet_size
-
-
-class Medication(models.Model):
-    name = models.CharField(
-        max_length=200,
-        unique=True,
-        validators=[RegexValidator(
-            r"^[a-zA-Z0-9-_]+$", "Allowed only letters, numbers, ‘-‘, ‘_’.")],
-        help_text="Name of the medication"
-    )
-
-    weight = models.DecimalField(
-        validators=[
-            MinValueValidator(1)
-        ],
-        max_digits=5,
-        decimal_places=2,
-        help_text="Weight of the medication in grams"
-    )
-
-    code = models.CharField(
-        max_length=200,
-        unique=True,
-        validators=[RegexValidator(
-            r"^[A-Z0-9_]+$", "Allowed only upper case letters, underscore and numbers.")],
-        help_text="Code of the medication"
-    )
-
-    image = models.ImageField(
-        upload_to="images_med",
-        null=True,
-        help_text="Image of the medication"
-    )
-
-    def __str__(self):
-        return f'{self.name}/{self.code} - cap: {self.weight}'
 
 
 class Drone(models.Model):
@@ -98,8 +61,9 @@ class Drone(models.Model):
         help_text="State of the drone"
     )
 
-    medications = models.ManyToManyField(
-        Medication, related_name="drones", blank=True)
+    @property
+    def load_info(self):
+        return LoadInformation.objects.filter(drone__pk=self.pk)
 
     def __str__(self):
         return f'{self.serial_number}/{self.model} - cap: {self.weight_limit}'
